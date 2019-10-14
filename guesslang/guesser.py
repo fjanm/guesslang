@@ -2,18 +2,15 @@
 
 import gc
 import logging
-from operator import itemgetter
 from math import ceil, log
+from operator import itemgetter
 from pathlib import Path
 from typing import List, Tuple, Dict, Iterator, Any, Callable, Optional
 
 import tensorflow as tf
-
 from guesslang.config import model_info, config_dict
 from guesslang.extractor import extract, CONTENT_SIZE
-from guesslang.utils import (
-    search_files, extract_from_files, safe_read_file, GuesslangError, DataSet)
-
+from guesslang.utils import (search_files, extract_from_files, safe_read_file, GuesslangError, DataSet)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,13 +34,13 @@ class Guess:
         model_data = model_info(model_dir)
 
         #: `tensorflow` model directory
-        self.model_dir: str = model_data[0]
+        self.model_dir = model_data[0]
 
         #: Tells if the current model is the default model
-        self.is_default: bool = model_data[1]
+        self.is_default = model_data[1]
 
         #: Supported languages associated with their extensions
-        self.languages: Dict[str, List[str]] = config_dict('languages.json')
+        self.languages = config_dict('languages.json')
 
         n_classes = len(self.languages)
         feature_columns = [
@@ -66,7 +63,7 @@ class Guess:
         """
         values = extract(text)
         input_fn = _to_func(([values], []))
-        pos: int = next(self._classifier.predict_classes(input_fn=input_fn))
+        pos = next(self._classifier.predict_classes(input_fn=input_fn))
 
         LOGGER.debug("Predicted language position %s", pos)
         return sorted(self.languages)[pos]
@@ -169,7 +166,7 @@ class Guess:
         :param input_dir: source code files directory.
         :return: test report
         """
-        report: Dict[str, Any] = {
+        report = {
             'overall-accuracy': 0,
             'per-language': {
                 lang: {
@@ -225,8 +222,8 @@ class Guess:
 
 
 def _pop_many(items: List[Path], chunk_size: int) -> Iterator[List[Path]]:
-    while items:
-        yield items[0:chunk_size]
+    for i in items:
+        yield i[0:chunk_size]
 
         # Avoid memory overflow
         del items[0:chunk_size]
